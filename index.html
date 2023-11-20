@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RSA Encryption/Decryption</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        #sidebar {
+            width: 30px;
+            background: #f3f3f3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.3s ease;
+        }
+
+        #sidebar:hover {
+            width: 100px;
+        }
+
+        .toggle {
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle:hover {
+            transform: scale(1.2);
+        }
+
+        #main {
+            flex: 1;
+            padding: 20px;
+            transition: margin 0.3s ease;
+            overflow: hidden;
+        }
+
+        .section {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .outputBox {
+            position: relative;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .outputText {
+            font-weight: bold;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+            flex: 1;
+        }
+
+        .copyBtn {
+            padding: 5px 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 10px;
+            z-index: 1;
+        }
+
+        .darkMode #main {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .darkMode #sidebar {
+            background-color: #444;
+        }
+
+        .darkMode #sidebar:hover {
+            width: 100px;
+        }
+
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.1.0/jsencrypt.min.js"></script>
+</head>
+<body>
+    <div id="sidebar">
+        <div class="toggle" onclick="toggleMode()">🌓</div>
+        <div class="toggle" onclick="toggleEncoder()">🔒</div>
+        <div class="toggle" onclick="toggleDecoder()">🔓</div>
+    </div>
+
+    <div id="main">
+        <div class="section" id="encoderSection">
+            <h2>Encoder</h2>
+            <input type="text" id="inputTextEncode" placeholder="Enter text to encode">
+            <br>
+            <button onclick="encryptText()">Encrypt</button>
+            <br><br>
+            <div class="outputBox">
+                <span class="outputText" id="outputTextEncode"></span>
+                <br>
+                <button class="copyBtn" onclick="copyText('outputTextEncode')">Copy</button>
+            </div>
+        </div>
+
+        <div class="section" id="decoderSection" style="display: none;">
+            <h2>Decoder</h2>
+            <input type="text" id="inputTextDecode" placeholder="Enter text to decode">
+            <br>
+            <button onclick="decryptText()">Decrypt</button>
+            <br><br>
+            <div class="outputBox">
+                <span class="outputText" id="outputTextDecode"></span>
+                <br>
+                <button class="copyBtn" onclick="copyText('outputTextDecode')">Copy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const encrypt = new JSEncrypt();
+        encrypt.generateKey(512);
+
+        function encryptWithRSA(text) {
+            return encrypt.encrypt(text);
+        }
+
+        function decryptWithRSA(encryptedText) {
+            return encrypt.decrypt(encryptedText);
+        }
+
+        function encryptText() {
+            const text = document.getElementById('inputTextEncode').value;
+            const encryptedText = encryptWithRSA(text);
+            document.getElementById('outputTextEncode').innerText = encryptedText || '';
+        }
+
+        function decryptText() {
+            const encryptedText = document.getElementById('inputTextDecode').value;
+            const decryptedText = decryptWithRSA(encryptedText);
+            document.getElementById('outputTextDecode').innerText = decryptedText || '';
+        }
+
+        function copyText(elementId) {
+            const textElement = document.getElementById(elementId);
+            const text = textElement.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function toggleMode() {
+            document.body.classList.toggle('darkMode');
+        }
+
+        function toggleEncoder() {
+            document.getElementById('encoderSection').style.display = 'block';
+            document.getElementById('decoderSection').style.display = 'none';
+        }
+
+        function toggleDecoder() {
+            document.getElementById('encoderSection').style.display = 'none';
+            document.getElementById('decoderSection').style.display = 'block';
+        }
+
+        function copyTextToClipboard(elementId) {
+            const textElement = document.getElementById(elementId);
+            const text = textElement.innerText;
+            
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    alert('Copied to clipboard');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                    alert('Failed to copy text. Please try again.');
+                });
+        }
+        
+    </script>
+</body>
+</html>
