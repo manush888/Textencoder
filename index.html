@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RSA Encryption/Decryption</title>
+    <title>Text Encoder By Manush</title>
     <style>
         body {
             display: flex;
@@ -120,13 +120,7 @@
         .darkMode #sidebar:hover {
             width: 100px;
         }
-
-        .darkMode .outputText {
-            color: black; 
-        }
-        
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.1.0/jsencrypt.min.js"></script>
 </head>
 <body>
     <div id="sidebar">
@@ -140,7 +134,7 @@
             <h2>Encoder</h2>
             <input type="text" id="inputTextEncode" placeholder="Enter text to encode">
             <br>
-            <button onclick="encryptText()">Encrypt</button>
+            <button onclick="encodeText()">Encode</button>
             <br><br>
             <div class="outputBox">
                 <span class="outputText" id="outputTextEncode"></span>
@@ -153,7 +147,7 @@
             <h2>Decoder</h2>
             <input type="text" id="inputTextDecode" placeholder="Enter text to decode">
             <br>
-            <button onclick="decryptText()">Decrypt</button>
+            <button onclick="decodeText()">Decode</button>
             <br><br>
             <div class="outputBox">
                 <span class="outputText" id="outputTextDecode"></span>
@@ -164,27 +158,16 @@
     </div>
 
     <script>
-        const encrypt = new JSEncrypt();
-        encrypt.generateKey(512);
-
-        function encryptWithRSA(text) {
-            return encrypt.encrypt(text);
-        }
-
-        function decryptWithRSA(encryptedText) {
-            return encrypt.decrypt(encryptedText);
-        }
-
-        function encryptText() {
+        function encodeText() {
             const text = document.getElementById('inputTextEncode').value;
-            const encryptedText = encryptWithRSA(text);
-            document.getElementById('outputTextEncode').innerText = encryptedText || '';
+            const encodedText = btoa(text);
+            document.getElementById('outputTextEncode').innerText = encodedText || '';
         }
 
-        function decryptText() {
-            const encryptedText = document.getElementById('inputTextDecode').value;
-            const decryptedText = decryptWithRSA(encryptedText);
-            document.getElementById('outputTextDecode').innerText = decryptedText || '';
+        function decodeText() {
+            const encodedText = document.getElementById('inputTextDecode').value;
+            const decodedText = atob(encodedText);
+            document.getElementById('outputTextDecode').innerText = decodedText || '';
         }
 
         function copyText(elementId) {
@@ -210,21 +193,6 @@
             document.getElementById('encoderSection').style.display = 'none';
             document.getElementById('decoderSection').style.display = 'block';
         }
-
-        function copyTextToClipboard(elementId) {
-            const textElement = document.getElementById(elementId);
-            const text = textElement.innerText;
-            
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    alert('Copied to clipboard');
-                })
-                .catch(err => {
-                    console.error('Failed to copy: ', err);
-                    alert('Failed to copy text. Please try again.');
-                });
-        }
-        
     </script>
 </body>
 </html>
