@@ -173,11 +173,7 @@
         function copyText(elementId) {
             const textElement = document.getElementById(elementId);
             const text = textElement.innerText;
-            navigator.clipboard.writeText(text).then(() => {
-            );
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
+            navigator.clipboard.writeText(text);
         }
 
         function toggleMode() {
